@@ -1,0 +1,9 @@
+---------------------------------------------
+------ Learning NextJs folder system   ------
+---------------------------------------------
+src/app
+├── page.js          # Ana sayfa
+├── about
+│   └── page.js      # "about" sayfası
+└── contact
+    └── page.js      # "contact" sayfası
