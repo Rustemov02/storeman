@@ -7,3 +7,19 @@ src/app
 │   └── page.js      # "about" sayfası
 └── contact
     └── page.js      # "contact" sayfası
+
+
+
+    src/app
+├── pages
+    └──api
+        └── submit-data.js         
+├── app
+│   └── layout.js
+    └── page.js
+    └── admin
+          └── page.js      
+└── components
+    └── Header.js       
+
+

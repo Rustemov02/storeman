@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { OutlinedInput } from '@mui/material';
+import { alertTitleClasses, OutlinedInput } from '@mui/material';
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import InputLabel from "@mui/material/InputLabel";
@@ -155,6 +155,7 @@ function App() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
 
+
   const optionsData = {
     "Mayalı Mallar": mayali,
     "Quru Mallar": quruMal,
@@ -190,11 +191,12 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (selectedProducts.length === 0) {
       alert('Ən azı bir məhsul seçin !')
       return;
     }
+
+
 
     for (let product of selectedProducts) {
       if (!quantities[product]) {
@@ -209,22 +211,41 @@ function App() {
     };
 
 
-    const uniqueKey = `${selectedOption}`;
+    const uniqueKey = selectedOption;
     localStorage.setItem(uniqueKey, JSON.stringify(orderData));
 
-    // Send DATA to NextJs APİ 
 
-    const response = await fetch('/api/submit-data', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(orderData)
-    })
 
-    const result = await response.json()
+    //-----------Send DATA to NextJs APİ ----------- \\
 
-    console.log(result)
+    try {
+      console.log(orderData)
+      const response = await fetch('/api/submit-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Something went wrong');
+      } else {
+        console.log('alright !')
+      }
+
+      const data = await response.json();
+      alert(data.message);
+
+    } catch (error) {
+      alert("Error " + error.message);
+      console.error('Form submission error:', error);
+    }
+
+
+    // -------------Sending data area --------------- \\
+
 
     alert("Sifariş verildi...Təşəkkürlər :) ");
     setSelectedProducts([]);
@@ -236,10 +257,10 @@ function App() {
     setProducts(optionsData[selectedOption]);
   }, [selectedOption]);
 
+
   return (
     <div className="App">
       <div>
-        <h1 style={{ fontFamily: 'monospace' }}>Sifarişlər</h1>
 
         <form style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", padding: '10px 0' }}>
 
@@ -292,8 +313,11 @@ function App() {
 
         </form>
 
-        <h3 style={{ color: "red", margin: "auto" }}>Sifarişlər saat 11:00-a qədər qəbul edilir!</h3>
+        <h3 style={{ color: "red", margin: "30px 0" , textAlign : 'center' }}>Sifarişlər saat 11:00-a qədər qəbul edilir!</h3>
       </div>
+
+
+
     </div>
   );
 }

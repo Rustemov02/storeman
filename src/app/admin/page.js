@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 
 
@@ -7,11 +7,30 @@ import Link from "next/link"
 const AdminPanel = () => {
     const [data, setData] = useState([])
 
-    const getAllLocalData = () => {
+    const getAllLocalData = async () => {
+
+        // Send DATA to NextJs APİ 
+
+        const response = await fetch('/api/submit-data', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+
+        const result = await response.json()
+
+        console.log(result)
+    }
+
+
+    useEffect(() => {
         const keys = Object.keys(localStorage)
         const allData = keys.map(key => JSON.parse(localStorage.getItem(key)))
         setData(allData)
-    }
+    }, [])
+
 
     const deleteData = () => {
         localStorage.clear()
