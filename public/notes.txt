@@ -23,3 +23,54 @@ src/app
     └── Header.js       
 
 
+
+-- use Dialog component from MUİ +++
+-- add time , date
+
+------------------------------------------------------------------------------------------------------------------------------
+https://www.figma.com/design/dAz8NV6nr18iuOsFyI5HDh/Mobile-UI-Kit%3A-Ecommerce-(Community)?node-id=134-12&t=5xrRqdrXuJSadqhc-0
+------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+ {/* <FormControl sx={{ my: 2, width: 300, display: "flex",fontFamily : "chilanka" }}>
+            <InputLabel>Məhsullar</InputLabel>
+            <Select
+              multiple
+              value={selectedProducts}
+              onChange={handleProductChange}
+              input={<OutlinedInput label="Products" />}
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {products.map((name, index) => (
+                <MenuItem key={index} value={name}>
+                  <Checkbox checked={selectedProducts.indexOf(name) > -1} />
+                  <ListItemText primary={name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl> */}
+
+
+
+
+
+
+
+           {/* {products.map((name, index) => (
+                  // onClick={() => handleCheckboxChange(name)}
+                  <ListItem key={index} primary={name}>
+                    <Checkbox checked={selectedProducts.includes(name)} />
+                    <ListItemText primary={name} />
+                  </ListItem>
+                ))} */}
+              {/* <Select
+                  multiple
+                  value={selectedProducts}
+                  onChange={handleProductChange}
+                  input={<OutlinedInput label="Products" />}
+                  renderValue={(selected) => selected.join(", ")}
+                > */}

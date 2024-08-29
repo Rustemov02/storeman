@@ -5,6 +5,10 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { option, quantities } = req.body
 
+
+        res.status(200).json({ message: "Data received succesfully" })
+
+
         if (!option || !quantities) {
             return res.status(400).json({ message: 'Name and mail are required !' })
         }
@@ -20,7 +24,7 @@ export default async function handler(req, res) {
             // Join all of products 
             const products = Object.entries(quantities).map(([productName, quantity]) => {
                 return `${productName} : ${quantity}`
-            }).join(', ') 
+            }).join(', ')
 
             console.log('Formatted products :' + products)
 
@@ -35,10 +39,10 @@ export default async function handler(req, res) {
             await connection.end();
             // res.status(200).json({ message: 'User added successfully', id: result.insertId })
 
- 
+
         } catch (error) {
             console.error('Database connection error', error)
-            res.status(500).json({ message: 'Database error' , error : error.message})
+            res.status(500).json({ message: 'Database error', error: error.message })
         }
     } else {
         res.status(405).json({ message: 'Method not allowed !' })

@@ -18,8 +18,8 @@ const Header = () => {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: 'row'}}>
-            <Link style={textStyle} href='/'>Sifarişlər</Link>
+        <div style={{ display: "flex", flexDirection: 'row',border : 'solid red 1px',height : "40px"}}>
+            {/* <Link style={textStyle} href='/'>Sifarişlər</Link> */}
             {/* <Link style={{ textDecoration: "none", color: "black", fontFamily: "cursive", fontSize: "23px", border: 'solid black 1px', padding: '3px 10px', borderRadius: "10px", backgroundColor: "#c3c3df" }} href='/admin'>Admin Panel</Link> */}
         </div>
     )

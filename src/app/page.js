@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { alertTitleClasses, OutlinedInput } from '@mui/material';
-import MenuItem from "@mui/material/MenuItem";
-import ListItemText from "@mui/material/ListItemText";
-import InputLabel from "@mui/material/InputLabel";
-import Checkbox from "@mui/material/Checkbox";
-// import Header from './Header';
+import { useEffect, useState } from 'react'; 
 import TextField from '@mui/material/TextField';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, List, ListItem, ListItemText } from '@mui/material';
 
 
 const quruMal = [
@@ -152,7 +148,7 @@ const tort = [
 function App() {
   const [selectedOption, setSelectedOption] = useState('Mayalı Mallar');
   const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]); 
   const [quantities, setQuantities] = useState({});
 
 
@@ -170,15 +166,15 @@ function App() {
     setQuantities({});
   };
 
-  const handleProductChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+  // const handleProductChange = (event) => {
+  //   const {
+  //     target: { value },
+  //   } = event;
 
-    setSelectedProducts(
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+  //   setSelectedProducts(
+  //     typeof value === "string" ? value.split(",") : value
+  //   );
+  // };
 
   const handleQuantityChange = (product, event) => {
     const { value } = event.target;
@@ -190,14 +186,12 @@ function App() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     if (selectedProducts.length === 0) {
       alert('Ən azı bir məhsul seçin !')
       return;
     }
-
-
-
+ 
     for (let product of selectedProducts) {
       if (!quantities[product]) {
         alert(`Zəhmət olmasa məhsulların miqdarını daxil edin !`);
@@ -210,16 +204,15 @@ function App() {
       quantities: quantities
     };
 
-
-    const uniqueKey = selectedOption;
-    localStorage.setItem(uniqueKey, JSON.stringify(orderData));
+    // It's for save data in LocalStorage
+    // const uniqueKey = selectedOption;
+    // localStorage.setItem(uniqueKey, JSON.stringify(orderData));
 
 
 
     //-----------Send DATA to NextJs APİ ----------- \\
 
-    try {
-      console.log(orderData)
+    try { 
       const response = await fetch('/api/submit-data', {
         method: 'POST',
         headers: {
@@ -235,11 +228,11 @@ function App() {
         console.log('alright !')
       }
 
-      const data = await response.json();
-      alert(data.message);
+      // const data = await response.json();
+      // alert(data.message);
 
     } catch (error) {
-      alert("Error " + error.message);
+      console.log("Error " + error.message);
       console.error('Form submission error:', error);
     }
 
@@ -252,68 +245,135 @@ function App() {
     setQuantities({});
   };
 
-
   useEffect(() => {
     setProducts(optionsData[selectedOption]);
-  }, [selectedOption]);
+  }, [selectedOption, selectedProducts]);
+
+  const optionsStyle = 'text-2xl m-2 p-2'
+
+  const deleteItemFromList = (productToDelete) => {
+    console.log(productToDelete)
+    setSelectedProducts(prevSelectedProducts =>
+      prevSelectedProducts.filter(product => product !== productToDelete)
+    )
+  }
+
+
+  // --------------------------------
+  // DİALOG component //
+  const [open, setOpen] = useState(false)
+
+  const handleCheckboxChange = product => {
+    setSelectedProducts(prev =>
+      prev.includes(product) ? prev.filter(item => item !== product) : [...prev, product]
+    )
+  }
+
+
+
+  function handleOn(e) {
+    e.preventDefault()
+    setOpen(true)
+  }
+  function handleOff(e) {
+    e.preventDefault()
+    setOpen(false)
+  }
+
 
 
   return (
     <div className="App">
       <div>
+        <h2 className='text-white text-4xl font-chilanka text-center py-10 bg-littleBlack'>Məhsullar</h2>
+
 
         <form style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", padding: '10px 0' }}>
 
-          <select value={selectedOption} onChange={handleOptionChange} style={{ width: "80%", fontSize: "20px", padding: '12px', fontFamily: 'monospace' }}>
-            <option>Mayalı Mallar</option>
-            <option>Quru Mallar</option>
-            <option>Tort</option>
-            <option>Mətbəx</option>
-            <option>Kassa/Barista</option>
+
+          <select value={selectedOption} onChange={handleOptionChange} className='border-2 rounded-md w-1/4 min-w-60 p-3 text-xl font-chilanka bg-aColor text-white' >
+            <option className={optionsStyle}>Mayalı Mallar</option>
+            <option className={optionsStyle}>Quru Mallar</option>
+            <option className={optionsStyle}>Tort</option>
+            <option className={optionsStyle}>Mətbəx</option>
+            <option className={optionsStyle}>Kassa/Barista</option>
           </select>
 
-          <FormControl sx={{ my: 2, width: 300, display: "flex" }}>
-            <InputLabel>Məhsullar</InputLabel>
-            <Select
-              multiple
-              value={selectedProducts}
-              onChange={handleProductChange}
-              input={<OutlinedInput label="Products" />}
-              renderValue={(selected) => selected.join(", ")}
-            >
-              {products.map((name, index) => (
-                <MenuItem key={index} value={name}>
-                  <Checkbox checked={selectedProducts.indexOf(name) > -1} />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+
+          <button className='border-2 rounded-md text-2xl p-3 w-1/4 min-w-60 my-3 align-start bg-aColor text-white font-chilanka' onClick={handleOn}>Məhsulları seçin</button>
+
+          <Dialog open={open} fullWidth maxWidth="sm">
+            <DialogTitle>Məhsulları seçin</DialogTitle>
+
+
+            <DialogContent>
+              <List>
+                {products.map((name, index) => (
+                  <ListItem key={index} onClick={() => handleCheckboxChange(name)}>
+                    <Checkbox checked={selectedProducts.includes(name)} />
+                    <ListItemText primary={name} />
+                  </ListItem>
+                ))}
+              </List>
+            </DialogContent>
+
+
+            <DialogActions>
+              <Button onClick={handleOff} variant='outlined' color="primary">Çıxış</Button>
+              <Button variant='contained' onClick={handleOff} color="primary">Təsdiq Et</Button>
+            </DialogActions>
+          </Dialog>
 
           {selectedProducts.map((product) => (
-            <div key={product} style={{ marginBottom: '10px', display: "flex", flexDirection: 'row', justifyContent: "space-between", width: '80%' }}>
+            <div key={product} className=' flex flex-row justify-evenly items-center gap-3 w-full py-2 px-1 my-2 bg-littleBlue'>
 
-              <h3>{product}</h3>
+              {/* <div className='flex flex-row space-between justify-center border-2'> */}
+              <h3 className='w-1/2 flex flex-col justify-center font-chilanka text-2xl text-white '>{product}</h3>
 
               <TextField
-                sx={{ width: '60px', }}
-                placeholder='...'
+                sx={{
+                  width: '100px',
+                  color: "white",
+                  '& .MuiInputBase-input::placeholder': {
+                    color: 'white', // Placeholder rengi
+                  },
+                  '& .MuiInputBase-input': {
+                    color: 'white', // Kullanıcının yazdığı metnin rengi
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      border: 'solid white 1px',
+                      fontStyle: "red",
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'green',  
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'black', // Odaklanmış durumdaki çerçeve rengi
+                    },
+                  },
+                }}
+                placeholder='Say'
                 type="number"
                 value={quantities[product] || ''}
                 onChange={(e) => handleQuantityChange(product, e)}
                 required
                 inputProps={{ min: 1, max: 100 }}
               />
+              {/* </div> */}
+
+              <button className='w-32 text-white text-2xl' onClick={() => deleteItemFromList(product)}> <FontAwesomeIcon icon={faTrash} /></button>
             </div>
           ))}
 
-          <button type="submit" style={{ width: '150px', height: "40px", margin: 'auto', fontSize: "20px" }} onClick={handleSubmit}>
-            Sifariş et
-          </button>
+          {selectedOption.length > 0 && (
+            // style={{ width: '150px', height: "40px", margin: 'auto', fontSize: "20px" }}
+            <button type="submit" className='border-2 rounded-md text-2xl p-3 w-1/4 min-w-52 my-3 align-start font-chilanka font-medium bg-littleBlack text-white' onClick={handleSubmit}>
+              Sifariş et
+            </button>)}
 
         </form>
 
-        <h3 style={{ color: "red", margin: "30px 0" , textAlign : 'center' }}>Sifarişlər saat 11:00-a qədər qəbul edilir!</h3>
       </div>
 
 
