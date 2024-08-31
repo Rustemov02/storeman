@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from 'react'; 
+import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, List, ListItem, ListItemText } from '@mui/material';
 
+import Textarea from '@mui/joy/Textarea';
+import dynamic from 'next/dynamic';
 
 const quruMal = [
   "Yumurta (ədəd)",
@@ -148,9 +150,19 @@ const tort = [
 function App() {
   const [selectedOption, setSelectedOption] = useState('Mayalı Mallar');
   const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]); 
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
+  const [message, setMessage] = useState('')
 
+  const [localDate, setLocalDate] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setLocalDate(new Date), 1000)
+
+    return function cleanup() {
+      clearInterval(timer)
+    }
+  }, [])
 
   const optionsData = {
     "Mayalı Mallar": mayali,
@@ -166,16 +178,6 @@ function App() {
     setQuantities({});
   };
 
-  // const handleProductChange = (event) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-
-  //   setSelectedProducts(
-  //     typeof value === "string" ? value.split(",") : value
-  //   );
-  // };
-
   const handleQuantityChange = (product, event) => {
     const { value } = event.target;
 
@@ -185,13 +187,14 @@ function App() {
     }));
   };
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     if (selectedProducts.length === 0) {
       alert('Ən azı bir məhsul seçin !')
       return;
     }
- 
+
     for (let product of selectedProducts) {
       if (!quantities[product]) {
         alert(`Zəhmət olmasa məhsulların miqdarını daxil edin !`);
@@ -201,18 +204,20 @@ function App() {
 
     const orderData = {
       option: selectedOption,
-      quantities: quantities
+      quantities: quantities,
+      message: message,
+      date: localDate.toLocaleString()
     };
 
     // It's for save data in LocalStorage
-    // const uniqueKey = selectedOption;
-    // localStorage.setItem(uniqueKey, JSON.stringify(orderData));
+    const uniqueKey = selectedOption;
+    localStorage.setItem(uniqueKey, JSON.stringify(orderData));
 
 
 
     //-----------Send DATA to NextJs APİ ----------- \\
 
-    try { 
+    try {
       const response = await fetch('/api/submit-data', {
         method: 'POST',
         headers: {
@@ -228,9 +233,6 @@ function App() {
         console.log('alright !')
       }
 
-      // const data = await response.json();
-      // alert(data.message);
-
     } catch (error) {
       console.log("Error " + error.message);
       console.error('Form submission error:', error);
@@ -243,6 +245,8 @@ function App() {
     alert("Sifariş verildi...Təşəkkürlər :) ");
     setSelectedProducts([]);
     setQuantities({});
+    setMessage('')
+
   };
 
   useEffect(() => {
@@ -268,8 +272,6 @@ function App() {
       prev.includes(product) ? prev.filter(item => item !== product) : [...prev, product]
     )
   }
-
-
 
   function handleOn(e) {
     e.preventDefault()
@@ -327,7 +329,6 @@ function App() {
           {selectedProducts.map((product) => (
             <div key={product} className=' flex flex-row justify-evenly items-center gap-3 w-full py-2 px-1 my-2 bg-littleBlue'>
 
-              {/* <div className='flex flex-row space-between justify-center border-2'> */}
               <h3 className='w-1/2 flex flex-col justify-center font-chilanka text-2xl text-white '>{product}</h3>
 
               <TextField
@@ -335,10 +336,10 @@ function App() {
                   width: '100px',
                   color: "white",
                   '& .MuiInputBase-input::placeholder': {
-                    color: 'white', // Placeholder rengi
+                    color: 'white',
                   },
                   '& .MuiInputBase-input': {
-                    color: 'white', // Kullanıcının yazdığı metnin rengi
+                    color: 'white',
                   },
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -346,10 +347,10 @@ function App() {
                       fontStyle: "red",
                     },
                     '&:hover fieldset': {
-                      borderColor: 'green',  
+                      borderColor: 'green',
                     },
                     '&.Mui-focused fieldset': {
-                      borderColor: 'black', // Odaklanmış durumdaki çerçeve rengi
+                      borderColor: 'black',
                     },
                   },
                 }}
@@ -360,17 +361,26 @@ function App() {
                 required
                 inputProps={{ min: 1, max: 100 }}
               />
-              {/* </div> */}
 
               <button className='w-32 text-white text-2xl' onClick={() => deleteItemFromList(product)}> <FontAwesomeIcon icon={faTrash} /></button>
             </div>
           ))}
 
-          {selectedOption.length > 0 && (
-            // style={{ width: '150px', height: "40px", margin: 'auto', fontSize: "20px" }}
-            <button type="submit" className='border-2 rounded-md text-2xl p-3 w-1/4 min-w-52 my-3 align-start font-chilanka font-medium bg-littleBlack text-white' onClick={handleSubmit}>
-              Sifariş et
-            </button>)}
+          <Textarea
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            color="neutral"
+            disabled={false}
+            sx={{ width: '25%', minWidth: "240px", fontSize: '20px' }}
+            minRows={3}
+            placeholder="Əlavə qeydlər..."
+            variant="soft"
+          />
+          <button type="submit" className='border-2 rounded-md text-2xl p-3 w-1/4 min-w-52 my-3 align-start font-chilanka font-medium bg-littleBlack text-white' onClick={handleSubmit}>
+            Sifariş et
+          </button>
+
+
 
         </form>
 

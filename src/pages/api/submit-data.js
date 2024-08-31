@@ -3,15 +3,10 @@ import mysql from 'mysql2/promise'
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { option, quantities } = req.body
+        const { option, quantities, message, date } = req.body
 
 
         res.status(200).json({ message: "Data received succesfully" })
-
-
-        if (!option || !quantities) {
-            return res.status(400).json({ message: 'Name and mail are required !' })
-        }
 
         try {
             const connection = await mysql.createConnection({
@@ -30,8 +25,8 @@ export default async function handler(req, res) {
 
             // for (const [productName, quantity] of Object.entries(quantities)) {
             const [result] = await connection.execute(
-                'INSERT INTO orders (`option`,`products`) VALUES (? , ?)',
-                [option, products]
+                'INSERT INTO orders (`date`,`option`,`products`,`message`) VALUES (? , ? , ? , ?)',
+                [date, option, products, message]
             );
             // }
 
