@@ -206,7 +206,7 @@ function App() {
       option: selectedOption,
       quantities: quantities,
       message: message,
-      date: localDate.toLocaleString()
+      // date: localDate.toLocaleString()
     };
 
     // It's for save data in LocalStorage
@@ -287,6 +287,7 @@ function App() {
   return (
     <div className="App">
       <div>
+        <p>Deployed !</p>
         <h2 className='text-white text-4xl font-chilanka text-center py-10 bg-littleBlack'>Məhsullar</h2>
 
 

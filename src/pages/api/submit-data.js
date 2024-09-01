@@ -1,19 +1,27 @@
 import mysql from 'mysql2/promise'
 
 
+
+
 export default async function handler(req, res) {
+
+    const host = process.env.NEXT_PUBLIC_DB_HOST;
+    const user = process.env.NEXT_PUBLIC_DB_USER;
+    const password = process.env.NEXT_PUBLIC_DB_PASSWORD;
+    const database = process.env.NEXT_PUBLIC_DB_NAME;
+
     if (req.method === 'POST') {
-        const { option, quantities, message, date } = req.body
+        const { option, quantities, message } = req.body
 
 
         res.status(200).json({ message: "Data received succesfully" })
 
         try {
             const connection = await mysql.createConnection({
-                host: 'localhost',
-                user: 'root',
-                password: '1008',
-                database: 'user_data'
+                host: host,
+                user: user,
+                password: password,
+                database: database
             })
 
             // Join all of products 
@@ -25,8 +33,8 @@ export default async function handler(req, res) {
 
             // for (const [productName, quantity] of Object.entries(quantities)) {
             const [result] = await connection.execute(
-                'INSERT INTO orders (`date`,`option`,`products`,`message`) VALUES (? , ? , ? , ?)',
-                [date, option, products, message]
+                'INSERT INTO orders (`option`,`products`,`message`) VALUES (? , ? , ?)',
+                [option, products, message]
             );
             // }
 
