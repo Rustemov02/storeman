@@ -287,7 +287,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <p>Deployed !</p> <p>Deployed 2!</p> 
+        <p>Deployed !</p> <p>Deployed 2!</p>  <p>Deployed 3!</p> 
         <h2 className='text-white text-4xl font-chilanka text-center py-10 bg-littleBlack'>Məhsullar</h2>
 
 
