@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +8,9 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, List, ListItem, ListItemText } from '@mui/material';
 
 import Textarea from '@mui/joy/Textarea';
-import dynamic from 'next/dynamic';
+
+import emailjs from '@emailjs/browser'
+
 
 const quruMal = [
   "Yumurta (ədəd)",
@@ -148,6 +150,9 @@ const tort = [
 
 
 function App() {
+
+  const form = useRef()
+
   const [selectedOption, setSelectedOption] = useState('Mayalı Mallar');
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -157,6 +162,9 @@ function App() {
   const [localDate, setLocalDate] = useState(new Date())
 
   useEffect(() => {
+    emailjs.init({
+      publicKey: 'nhvADr2G-rlep_jlW'
+    })
     const timer = setInterval(() => setLocalDate(new Date), 1000)
 
     return function cleanup() {
@@ -206,40 +214,71 @@ function App() {
       option: selectedOption,
       quantities: quantities,
       message: message,
-      // date: localDate.toLocaleString()
+      date: localDate.toLocaleString()
     };
 
+    emailjs.send("service_ne8grdn", "template_ak975w7", {
+      option: orderData.option,
+      quantities: JSON.stringify(orderData.quantities),
+      message: orderData.message,
+      date: orderData.date
+    })
+      .then((result) => {
+        console.log(result.text)
+        // alert('Sifarişiniz verildi...Təşəkkür edirik !')
+      }, (error) => {
+        console.log(error.text)
+      }
+      )
+ 
     // It's for save data in LocalStorage
-    const uniqueKey = selectedOption;
-    localStorage.setItem(uniqueKey, JSON.stringify(orderData));
-
+    // const uniqueKey = selectedOption;
+    // localStorage.setItem(uniqueKey, JSON.stringify(orderData));
 
 
     //-----------Send DATA to NextJs APİ ----------- \\
 
-    try {
-      const response = await fetch('/api/submit-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
+    // try {
+    //   const response = await fetch('/api/submit-data', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(orderData),
+    //   });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong');
-      } else {
-        console.log('alright !')
-      }
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     throw new Error(errorData.message || 'Something went wrong');
+    //   } else {
+    //     console.log('alright !')
+    //   }
 
-    } catch (error) {
-      console.log("Error " + error.message);
-      console.error('Form submission error:', error);
-    }
+    // } catch (error) {
+    //   console.log("Error " + error.message);
+    //   console.error('Form submission error:', error);
+    // }
 
 
     // -------------Sending data area --------------- \\
+
+
+    // ------------- Send DATA to email address --------\\ 
+
+    // const res = await fetch('/api/send-email', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(orderData)
+    // })
+
+    // const result = await res.json()
+    // console.log(result.message)
+    // return;
+
+    // -------- Send DATA to email address with EmailJS
+
+
+
 
 
     alert("Sifariş verildi...Təşəkkürlər :) ");
@@ -287,7 +326,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <p>Deployed !</p> <p>Deployed 2!</p>  <p>Deployed 3!</p> 
+
         <h2 className='text-white text-4xl font-chilanka text-center py-10 bg-littleBlack'>Məhsullar</h2>
 
 
