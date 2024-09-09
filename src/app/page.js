@@ -4,11 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, List, ListItem, ListItemText } from '@mui/material';
-
 import Textarea from '@mui/joy/Textarea';
-
 import emailjs from '@emailjs/browser'
 
 
@@ -151,7 +148,6 @@ const tort = [
 
 function App() {
 
-  const form = useRef()
 
   const [selectedOption, setSelectedOption] = useState('Mayalı Mallar');
   const [products, setProducts] = useState([]);
@@ -225,61 +221,14 @@ function App() {
     })
       .then((result) => {
         console.log(result.text)
-        // alert('Sifarişiniz verildi...Təşəkkür edirik !')
       }, (error) => {
         console.log(error.text)
       }
       )
- 
+
     // It's for save data in LocalStorage
     // const uniqueKey = selectedOption;
     // localStorage.setItem(uniqueKey, JSON.stringify(orderData));
-
-
-    //-----------Send DATA to NextJs APİ ----------- \\
-
-    // try {
-    //   const response = await fetch('/api/submit-data', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(orderData),
-    //   });
-
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     throw new Error(errorData.message || 'Something went wrong');
-    //   } else {
-    //     console.log('alright !')
-    //   }
-
-    // } catch (error) {
-    //   console.log("Error " + error.message);
-    //   console.error('Form submission error:', error);
-    // }
-
-
-    // -------------Sending data area --------------- \\
-
-
-    // ------------- Send DATA to email address --------\\ 
-
-    // const res = await fetch('/api/send-email', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(orderData)
-    // })
-
-    // const result = await res.json()
-    // console.log(result.message)
-    // return;
-
-    // -------- Send DATA to email address with EmailJS
-
-
-
-
 
     alert("Sifariş verildi...Təşəkkürlər :) ");
     setSelectedProducts([]);
@@ -302,7 +251,6 @@ function App() {
   }
 
 
-  // --------------------------------
   // DİALOG component //
   const [open, setOpen] = useState(false)
 
@@ -372,6 +320,7 @@ function App() {
               <h3 className='w-1/2 flex flex-col justify-center font-chilanka text-2xl text-white '>{product}</h3>
 
               <TextField
+                // customize default style 
                 sx={{
                   width: '100px',
                   color: "white",
@@ -419,15 +368,8 @@ function App() {
           <button type="submit" className='border-2 rounded-md text-2xl p-3 w-1/4 min-w-52 my-3 align-start font-chilanka font-medium bg-littleBlack text-white' onClick={handleSubmit}>
             Sifariş et
           </button>
-
-
-
         </form>
-
       </div>
-
-
-
     </div>
   );
 }
